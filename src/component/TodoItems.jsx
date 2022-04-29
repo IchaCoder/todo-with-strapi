@@ -4,26 +4,14 @@ import { useGlobalContext } from "../context";
 import axios from "axios";
 
 const Todoitems = () => {
-	const { todos, baseURL, fetchTodo } = useGlobalContext();
+	const { todos, baseURL, fetchTodo, handleDelete, handleEdit } =
+		useGlobalContext();
 
 	const handleCheckbox = async (e, id) => {
 		try {
 			const res = await axios.put(`${baseURL}/todos/${id}`, {
 				data: { completed: e.target.checked },
 			});
-
-			console.log(res);
-			fetchTodo();
-		} catch (error) {
-			console.log(error);
-		}
-	};
-
-	const handleDelete = async (id) => {
-		try {
-			const res = await axios.delete(`${baseURL}/todos/${id}`);
-
-			console.log(res);
 			fetchTodo();
 		} catch (error) {
 			console.log(error);
@@ -60,7 +48,10 @@ const Todoitems = () => {
 									</p>
 								</div>
 								<div className="flex gap-2">
-									<FiEdit className="cursor-pointer w-6 h-6 hover:scale-110 transition-transform delay-200 ease-linear" />
+									<FiEdit
+										className="cursor-pointer w-6 h-6 hover:scale-110 transition-transform delay-200 ease-linear"
+										onClick={(e) => handleEdit(id)}
+									/>
 									<ImBin
 										className="cursor-pointer w-6 h-6 hover:scale-110 transition-transform delay-200 ease-linear"
 										onClick={() => handleDelete(id)}

@@ -6,30 +6,7 @@ import { useGlobalContext } from "../context";
 import Todoitems from "./TodoItems";
 
 const Home = () => {
-	const [todo, setTodo] = useState("");
-	const [completed, setCompleted] = useState(false);
-	const { baseURL, fetchTodo } = useGlobalContext();
-
-	const handleSubmit = async (e) => {
-		e.preventDefault();
-		if (!todo) return;
-		const data = {
-			name: todo,
-			completed: completed,
-		};
-
-		try {
-			const res = await axios.post(`${baseURL}/todos`, {
-				data: data,
-			});
-
-			console.log(res);
-			fetchTodo();
-			setTodo("");
-		} catch (error) {
-			console.log(error);
-		}
-	};
+	const { todo, setTodo, handleSubmit } = useGlobalContext();
 
 	return (
 		<div>
