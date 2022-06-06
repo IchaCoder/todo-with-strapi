@@ -1,17 +1,16 @@
 /** @format */
 
-import axios from "axios";
 import React, { useState } from "react";
 import { useGlobalContext } from "../context";
 import Todoitems from "./TodoItems";
 
 const Home = () => {
-	const { todo, setTodo, handleSubmit } = useGlobalContext();
+	const { todo, setTodo, handleSubmit, user } = useGlobalContext();
 
 	return (
 		<div>
 			<h1 className="text-white text-3xl text-center mt-4">
-				Welcome to my todo app
+				Welcome {user}, create a todo
 			</h1>
 			<form
 				onSubmit={handleSubmit}

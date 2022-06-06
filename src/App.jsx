@@ -2,14 +2,27 @@
 
 import { useState } from "react";
 import Home from "./component/Home";
-import Todoitems from "./component/TodoItems";
-import { useGlobalContext } from "./context";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Login from "./Pages/Login";
+import Signup from "./Pages/Signup";
+import Protectedroute from "./ProtectedRoute";
 
 function App() {
 	return (
-		<div className="">
-			<Home />
-		</div>
+		<Router>
+			<Routes>
+				<Route
+					path="/"
+					element={
+						<Protectedroute>
+							<Home />
+						</Protectedroute>
+					}
+				/>
+				<Route path="/login" element={<Login />} />
+				<Route path="/signup" element={<Signup />} />
+			</Routes>
+		</Router>
 	);
 }
 

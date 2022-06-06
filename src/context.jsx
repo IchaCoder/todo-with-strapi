@@ -1,7 +1,17 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
+import Loading from "./component/Loading";
 
 const AppContext = React.createContext();
+
+const getLocalStorage = () => {
+	let token = localStorage.getItem("token");
+	if (token) {
+		return (token = JSON.parse(localStorage.getItem("token")));
+	} else {
+		return "";
+	}
+};
 
 const AppProvider = ({ children }) => {
 	const baseURL = "http://localhost:1337/api";
@@ -10,6 +20,12 @@ const AppProvider = ({ children }) => {
 	const [editingID, setEditingID] = useState(false);
 	const [todo, setTodo] = useState("");
 	const [completed, setCompleted] = useState(false);
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
+	const [loading, setLoading] = useState(true);
+	const [user, setUser] = useState("");
+	const [token, setToken] = useState(getLocalStorage());
+	console.log(token);
 
 	const fetchTodo = async () => {
 		try {
@@ -75,6 +91,20 @@ const AppProvider = ({ children }) => {
 		fetchTodo();
 	}, []);
 
+	useEffect(() => {
+		localStorage.setItem("token", JSON.stringify(token));
+	}, [token]);
+
+	useEffect(() => {
+		if (token) {
+			setLoading(false);
+		}
+	});
+
+	if (loading) {
+		return <Loading />;
+	}
+
 	return (
 		<AppContext.Provider
 			value={{
@@ -90,6 +120,14 @@ const AppProvider = ({ children }) => {
 				setTodo,
 				handleDelete,
 				handleEdit,
+				email,
+				setEmail,
+				password,
+				setPassword,
+				setLoading,
+				setUser,
+				user,
+				setToken,
 			}}
 		>
 			{children}
