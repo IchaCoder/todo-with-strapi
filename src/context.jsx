@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import Loading from "./component/Loading";
+import { fetchTodo, handleDelete } from "./Functions";
 
 const AppContext = React.createContext();
 
@@ -16,22 +17,6 @@ const AppProvider = ({ children }) => {
 	const [loading, setLoading] = useState(false);
 	const [user, setUser] = useState("");
 
-	const fetchTodo = async () => {
-		const token = localStorage.getItem("token");
-		try {
-			const res = await axios.get(`${baseURL}/todos`, {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			});
-			const { data } = res.data;
-			console.log(data);
-			setTodos(data);
-		} catch (error) {
-			console.log(error);
-		}
-	};
-
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		if (!todo) return;
@@ -44,7 +29,7 @@ const AppProvider = ({ children }) => {
 
 		if (!isEditing) {
 			try {
-				const res = await axios.post(
+				await axios.post(
 					`${baseURL}/todos`,
 					{
 						data: data,
@@ -55,7 +40,7 @@ const AppProvider = ({ children }) => {
 						},
 					}
 				);
-				fetchTodo();
+				fetchTodo(setTodos);
 				setTodo("");
 			} catch (error) {
 				console.log(error);
@@ -73,27 +58,14 @@ const AppProvider = ({ children }) => {
 						},
 					}
 				);
-				fetchTodo();
+				fetchTodo(setTodos);
+
 				setEditingID("");
 				setIsEditing(false);
 				setTodo("");
 			} catch (error) {
 				console.log(error);
 			}
-		}
-	};
-
-	const handleDelete = async (id) => {
-		const token = localStorage.getItem("token");
-		try {
-			const res = await axios.delete(`${baseURL}/todos/${id}`, {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			});
-			fetchTodo();
-		} catch (error) {
-			console.log(error);
 		}
 	};
 
@@ -105,7 +77,7 @@ const AppProvider = ({ children }) => {
 	};
 
 	useEffect(() => {
-		fetchTodo();
+		fetchTodo(setTodos);
 	}, []);
 
 	if (loading) {
@@ -134,6 +106,7 @@ const AppProvider = ({ children }) => {
 				setLoading,
 				setUser,
 				user,
+				setTodos,
 			}}
 		>
 			{children}

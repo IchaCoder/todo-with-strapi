@@ -4,7 +4,7 @@ import { useGlobalContext } from "../context";
 import axios from "axios";
 
 const Todoitems = () => {
-	const { todos, baseURL, fetchTodo, handleDelete, handleEdit } =
+	const { todos, baseURL, fetchTodo, handleDelete, handleEdit, setTodos } =
 		useGlobalContext();
 
 	const handleCheckbox = async (e, id) => {
@@ -21,7 +21,7 @@ const Todoitems = () => {
 					},
 				}
 			);
-			fetchTodo();
+			fetchTodo(setTodos);
 		} catch (error) {
 			console.log(error);
 		}
@@ -63,7 +63,7 @@ const Todoitems = () => {
 									/>
 									<ImBin
 										className="cursor-pointer w-6 h-6 hover:scale-110 transition-transform delay-200 ease-linear"
-										onClick={() => handleDelete(id)}
+										onClick={() => handleDelete(id, setTodos)}
 									/>
 								</div>
 							</li>
