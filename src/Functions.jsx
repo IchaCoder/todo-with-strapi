@@ -32,3 +32,55 @@ export const handleDelete = async (id, setTodos) => {
 		console.log(error);
 	}
 };
+
+const handleSubmit = async (e) => {
+	e.preventDefault();
+	if (!todo) return;
+	const data = {
+		name: todo,
+		completed: completed,
+	};
+
+	const token = localStorage.getItem("token");
+
+	if (!isEditing) {
+		try {
+			await axios.post(
+				`${baseURL}/todos`,
+				{
+					data: data,
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
+			fetchTodo(setTodos);
+			setTodo("");
+		} catch (error) {
+			console.log(error);
+		}
+	} else {
+		try {
+			await axios.put(
+				`${baseURL}/todos/${editingID}`,
+				{
+					data: { name: todo },
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
+			fetchTodo(setTodos);
+
+			setEditingID("");
+			setIsEditing(false);
+			setTodo("");
+		} catch (error) {
+			console.log(error);
+		}
+	}
+};
