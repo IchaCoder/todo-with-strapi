@@ -4,35 +4,29 @@ import Loading from "./component/Loading";
 
 const AppContext = React.createContext();
 
-const getLocalStorage = () => {
-	let token = localStorage.getItem("token");
-	if (token) {
-		return (token = JSON.parse(localStorage.getItem("token")));
-	} else {
-		return "";
-	}
-};
-
 const AppProvider = ({ children }) => {
 	const baseURL = "http://localhost:1337/api";
 	const [todos, setTodos] = useState([]);
 	const [isEditing, setIsEditing] = useState(false);
 	const [editingID, setEditingID] = useState(false);
 	const [todo, setTodo] = useState("");
-	const [completed, setCompleted] = useState(false);
+	const [completed] = useState(false);
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-	const [loading, setLoading] = useState(true);
+	const [loading, setLoading] = useState(false);
 	const [user, setUser] = useState("");
-	const [token, setToken] = useState(getLocalStorage());
-	console.log(token);
 
 	const fetchTodo = async () => {
+		const token = localStorage.getItem("token");
 		try {
-			const res = await axios.get(`${baseURL}/todos`);
+			const res = await axios.get(`${baseURL}/todos`, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
 			const { data } = res.data;
-			setTodos(data);
 			console.log(data);
+			setTodos(data);
 		} catch (error) {
 			console.log(error);
 		}
@@ -46,11 +40,21 @@ const AppProvider = ({ children }) => {
 			completed: completed,
 		};
 
+		const token = localStorage.getItem("token");
+
 		if (!isEditing) {
 			try {
-				const res = await axios.post(`${baseURL}/todos`, {
-					data: data,
-				});
+				const res = await axios.post(
+					`${baseURL}/todos`,
+					{
+						data: data,
+					},
+					{
+						headers: {
+							Authorization: `Bearer ${token}`,
+						},
+					}
+				);
 				fetchTodo();
 				setTodo("");
 			} catch (error) {
@@ -58,9 +62,17 @@ const AppProvider = ({ children }) => {
 			}
 		} else {
 			try {
-				const res = await axios.put(`${baseURL}/todos/${editingID}`, {
-					data: { name: todo },
-				});
+				await axios.put(
+					`${baseURL}/todos/${editingID}`,
+					{
+						data: { name: todo },
+					},
+					{
+						headers: {
+							Authorization: `Bearer ${token}`,
+						},
+					}
+				);
 				fetchTodo();
 				setEditingID("");
 				setIsEditing(false);
@@ -72,8 +84,13 @@ const AppProvider = ({ children }) => {
 	};
 
 	const handleDelete = async (id) => {
+		const token = localStorage.getItem("token");
 		try {
-			const res = await axios.delete(`${baseURL}/todos/${id}`);
+			const res = await axios.delete(`${baseURL}/todos/${id}`, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
 			fetchTodo();
 		} catch (error) {
 			console.log(error);
@@ -90,16 +107,6 @@ const AppProvider = ({ children }) => {
 	useEffect(() => {
 		fetchTodo();
 	}, []);
-
-	useEffect(() => {
-		localStorage.setItem("token", JSON.stringify(token));
-	}, [token]);
-
-	useEffect(() => {
-		if (token) {
-			setLoading(false);
-		}
-	});
 
 	if (loading) {
 		return <Loading />;
@@ -127,7 +134,6 @@ const AppProvider = ({ children }) => {
 				setLoading,
 				setUser,
 				user,
-				setToken,
 			}}
 		>
 			{children}

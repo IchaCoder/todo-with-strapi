@@ -1,11 +1,18 @@
 /** @format */
 
 import React, { useState } from "react";
+import { useNavigate } from "react-router";
 import { useGlobalContext } from "../context";
 import Todoitems from "./TodoItems";
 
 const Home = () => {
 	const { todo, setTodo, handleSubmit, user } = useGlobalContext();
+	const navigate = useNavigate();
+
+	const handleLogout = () => {
+		localStorage.removeItem("token");
+		navigate("/");
+	};
 
 	return (
 		<div>
@@ -31,6 +38,12 @@ const Home = () => {
 					</div>
 					<Todoitems />
 				</fieldset>
+				<button
+					className="border border-primary border-solid px-6 py-1 grid mx-auto mt-4 hover:bg-primary hover:text-white font-bold capitalize tracking-wide transition-all ease-linear duration-200"
+					onClick={handleLogout}
+				>
+					logout
+				</button>
 			</form>
 		</div>
 	);

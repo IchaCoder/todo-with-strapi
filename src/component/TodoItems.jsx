@@ -8,10 +8,19 @@ const Todoitems = () => {
 		useGlobalContext();
 
 	const handleCheckbox = async (e, id) => {
+		const token = localStorage.getItem("token");
 		try {
-			const res = await axios.put(`${baseURL}/todos/${id}`, {
-				data: { completed: e.target.checked },
-			});
+			await axios.put(
+				`${baseURL}/todos/${id}`,
+				{
+					data: { completed: e.target.checked },
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
 			fetchTodo();
 		} catch (error) {
 			console.log(error);
